@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      uri: ${SICREDI_VOTES_DATABASE_URL:mongodb://mongo-db:27017/sicred-votes}
+      username:
+      password:
+topic:
+  settings:
+    seconds-to-expire-default: ${SECONDS-TO-EXPIRE-DEFAULT:60}
