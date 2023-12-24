@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.edu.sicredi.votes.domain.enums.TopicStatusEnum;
 import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
 import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
-import org.edu.sicredi.votes.domain.response.TopicVotesCountResultResponse;
+import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,9 @@ public class TopicBuilder {
     return TopicPersistence.builder()
         .name(topicName)
         .description(description)
+        .status(TopicStatusEnum.CREATED)
         .createdAt(new Date())
-        .timeToExpire(
+        .secondsToExpire(
             Objects.equals(secondsToExpire, ZERO.longValue()) ? secondsToExpireDefault : secondsToExpire)
         .votes(Set.of())
         .build();
@@ -43,18 +45,18 @@ public class TopicBuilder {
   ) {
     return TopicVotesCountResult.builder()
         .voteAmountPerOption(countResultByOption)
-        .totalAmount(topic.getVotes().size())
+        .votesTotalAmount(topic.getVotes().size())
         .startedAt(topic.getStartedAt())
         .closedAt(topic.getClosedAt())
         .build();
   }
 
-  public TopicVotesCountResultResponse buildTopicVotesResultResponse(
+  public TopicVotesResultResponse buildTopicVotesResultResponse(
       TopicVotesCountResult topicVotesCountResult
   ) {
-    return TopicVotesCountResultResponse.builder()
+    return TopicVotesResultResponse.builder()
         .voteAmountPerOption(topicVotesCountResult.getVoteAmountPerOption())
-        .totalAmount(topicVotesCountResult.getTotalAmount())
+        .votesTotalAmount(topicVotesCountResult.getVotesTotalAmount())
         .startedAt(topicVotesCountResult.getStartedAt())
         .closedAt(topicVotesCountResult.getClosedAt())
         .build();

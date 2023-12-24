@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class TopicVotesCountResult {
   private Map<String, Long> voteAmountPerOption;
-  private long totalAmount;
+  private long votesTotalAmount;
   private Date startedAt;
   private Date closedAt;
 }

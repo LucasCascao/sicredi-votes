@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document("Votes")
 public class VotePersistence {
-  @Id
   private String id;
   private String associateCpf;
   private String topicId;
