@@ -1,18 +1,24 @@
 package org.edu.sicredi.votes.service.impl;
 
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_CREATED_SUCCESSFULLY_MESSAGE;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_FINALIZED_MESSAGE;
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_OPENED_TO_RECEIVE_VOTES_MESSAGE;
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_VOTES_COUNTED_SUCCESSFULLY_MESSAGE;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.edu.sicredi.votes.builder.TopicBuilder;
+import org.edu.sicredi.votes.domain.enums.TopicStatusEnum;
 import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
 import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
 import org.edu.sicredi.votes.domain.persistence.VotePersistence;
 import org.edu.sicredi.votes.provider.TopicProvider;
+import org.edu.sicredi.votes.schedule.TopicFinalizer;
 import org.edu.sicredi.votes.service.TopicService;
 import org.edu.sicredi.votes.validator.TopicValidator;
 import org.springframework.stereotype.Service;
@@ -39,19 +45,33 @@ public class TopicServiceImpl implements TopicService {
   @Override
   public void startTopicVoting(String topicId) {
     TopicPersistence topic = topicProvider.findTopicById(topicId);
-    topicValidator.verifyIfTopicIsOpened(topic);
-    Date currentTime = new Date();
-    Date scheduledTimeToClose = new Date(currentTime.getTime() + topic.getTimeToExpire() * 1000);
-    topic.setStartedAt(currentTime);
-    topic.setClosedAt(scheduledTimeToClose);
+    topicValidator.verifyTopicIsAbleToBeInitialized(topic);
+    TopicFinalizer topicFinalizer = TopicFinalizer.builder()
+        .topicIdScheduled(topic.getId())
+        .topicService(this)
+        .build();
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    scheduler.schedule(topicFinalizer, topic.getSecondsToExpire(), TimeUnit.SECONDS);
+    scheduler.shutdown();
+    topic.setStatus(TopicStatusEnum.INITIALIZED);
+    topic.setStartedAt(new Date());
     topicProvider.saveTopic(topic);
     log.info(TOPIC_OPENED_TO_RECEIVE_VOTES_MESSAGE,topicId);
   }
 
   @Override
+  public void finalizeTopicVoting(String topicId) {
+    TopicPersistence topic = topicProvider.findTopicById(topicId);
+    topic.setClosedAt(new Date());
+    topic.setStatus(TopicStatusEnum.FINISHED);
+    topicProvider.saveTopic(topic);
+    log.info(TOPIC_FINALIZED_MESSAGE,topicId);
+  }
+
+  @Override
   public TopicVotesCountResult countVotesByTopic(String topicId) {
     TopicPersistence debateItem = topicProvider.findTopicById(topicId);
-    topicValidator.verifyIfTopicIsFinished(debateItem);
+    topicValidator.verifyTopicVotingIsFinalized(debateItem);
     Map<String, Long> countResultByOption = countVotesPerOption(debateItem);
     TopicVotesCountResult topicVotesCountResult =
         topicBuilder.buildTopicVotesCountResult(countResultByOption, debateItem);
@@ -68,5 +88,4 @@ public class TopicServiceImpl implements TopicService {
     }
     return countResultByOption;
   }
-
 }
