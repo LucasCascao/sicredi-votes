@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
 import org.edu.sicredi.votes.domain.request.RegisterVoteRequest;
@@ -38,7 +39,7 @@ public class VotesController {
   })
   @PostMapping
   public ResponseEntity<Void> registerIndividualVote(
-      @RequestBody RegisterVoteRequest request) {
+      @Valid @RequestBody RegisterVoteRequest request) {
     service.registerVote(
         request.getAssociateCpf(),
         request.getTopicId(),
