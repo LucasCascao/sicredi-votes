@@ -7,3 +7,10 @@ spring:
 topic:
   settings:
     seconds-to-expire-default: ${SECONDS-TO-EXPIRE-DEFAULT:60}
+
+springdoc.packages-to-scan: org.edu.sicredi.votes.controller.v1
+springdoc.swagger-ui.tryItOutEnabled: true
+springdoc.swagger-ui.operationsSorter: method
+springdoc.swagger-ui.tagsSorter: alpha
+springdoc.swagger-ui.filter: true
+springdoc.enable-data-rest: false
