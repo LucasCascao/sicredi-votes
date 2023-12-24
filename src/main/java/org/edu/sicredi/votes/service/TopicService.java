@@ -7,6 +7,7 @@ public interface TopicService {
   String createNewTopic(String topicName, String description, long secondsToExpire);
 
   void startTopicVoting(String topicId);
+  void finalizeTopicVoting(String topicId);
 
   TopicVotesCountResult countVotesByTopic(String topicId);
 
