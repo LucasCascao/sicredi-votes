@@ -1,6 +1,6 @@
 package org.edu.sicredi.votes.provider;
 
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.DEBATE_ITEM_NOT_FOUND_MESSAGE;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_NOT_FOUND_MESSAGE;
 
 import lombok.RequiredArgsConstructor;
 import org.edu.sicredi.votes.builder.BusinessExceptionBuilder;
@@ -22,7 +22,7 @@ public class TopicProvider {
   public TopicPersistence findTopicById(String topicId) {
     return repository.findById(topicId).orElseThrow(
         () -> BusinessExceptionBuilder.buildBusinessException(HttpStatus.NOT_FOUND,
-            DEBATE_ITEM_NOT_FOUND_MESSAGE)
+            TOPIC_NOT_FOUND_MESSAGE)
     );
   }
 
