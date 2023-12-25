@@ -21,6 +21,7 @@ import org.edu.sicredi.votes.provider.TopicProvider;
 import org.edu.sicredi.votes.schedule.TopicFinalizer;
 import org.edu.sicredi.votes.service.TopicService;
 import org.edu.sicredi.votes.validator.TopicValidator;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -31,6 +32,7 @@ public class TopicServiceImpl implements TopicService {
   private final TopicProvider topicProvider;
   private final TopicBuilder topicBuilder;
   private final TopicValidator topicValidator;
+  private final KafkaTemplate<Object, Object> kafkaTemplate;
 
   @Override
   public String createNewTopic(String topicName, String description,
@@ -65,6 +67,7 @@ public class TopicServiceImpl implements TopicService {
     topic.setClosedAt(new Date());
     topic.setStatus(TopicStatusEnum.FINISHED);
     topicProvider.saveTopic(topic);
+    kafkaTemplate.send("topic1", countVotesByTopic(topicId));
     log.info(TOPIC_FINALIZED_MESSAGE,topicId);
   }
 
