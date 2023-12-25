@@ -4,6 +4,12 @@ spring:
       uri: ${SICREDI_VOTES_DATABASE_URL:mongodb://mongo-db:27017/sicred-votes}
       username:
       password:
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
 topic:
   settings:
     seconds-to-expire-default: ${SECONDS-TO-EXPIRE-DEFAULT:60}
