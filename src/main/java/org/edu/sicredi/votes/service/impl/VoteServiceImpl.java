@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class VoteServiceImpl implements VoteService {
 
   private final TopicValidator topicValidator;
+  private final VoteBuilder voteBuilder;
   private final TopicProvider provider;
 
   @Override
@@ -26,7 +27,7 @@ public class VoteServiceImpl implements VoteService {
     TopicPersistence topic = provider.findTopicById(topicId);
     topicValidator.verifyTopicIsOpenedToVote(topic);
     topicValidator.verifyIfAssociateCpfHasVoted(associateCpf, topic.getVotes());
-    VotePersistence vote = VoteBuilder.buildVotePersistence(associateCpf, topicId, voteOption);
+    VotePersistence vote = voteBuilder.buildVotePersistence(associateCpf, topicId, voteOption);
     topic.getVotes().add(vote);
     provider.saveTopic(topic);
     log.info(VOTE_REGISTERED_SUCCESSFULLY_MESSAGE,

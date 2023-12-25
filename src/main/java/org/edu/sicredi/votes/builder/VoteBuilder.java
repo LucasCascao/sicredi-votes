@@ -1,13 +1,12 @@
 package org.edu.sicredi.votes.builder;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
 import org.edu.sicredi.votes.domain.persistence.VotePersistence;
+import org.springframework.stereotype.Service;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Service
 public class VoteBuilder {
-  public static VotePersistence buildVotePersistence(String cpf, String topicId,
+  public VotePersistence buildVotePersistence(String cpf, String topicId,
       VoteOptionEnum voteOption) {
     return VotePersistence.builder()
         .associateCpf(cpf)
