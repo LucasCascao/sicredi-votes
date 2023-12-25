@@ -6,7 +6,7 @@ Bem-vindo ao repositório do projeto de criação de pautas para votação de as
 
 A documentação completa da API pode ser encontrada no Swagger. Consulte o link abaixo para obter detalhes sobre os endpoints disponíveis, parâmetros necessários e exemplos de requisições e respostas:
 
-[Swagger - Documentação da API]()
+[Swagger - Documentação da API](http://localhost:8080/swagger-ui/index.html)
 
 ## Inicializando a Aplicação com Spring Boot e Java 17 usando Gradle
 
