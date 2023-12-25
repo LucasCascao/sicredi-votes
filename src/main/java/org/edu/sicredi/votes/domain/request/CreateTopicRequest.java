@@ -9,9 +9,8 @@ import lombok.Data;
 @Builder
 public class CreateTopicRequest {
   @NotNull
-  @Size(min = 5)
   private String name;
-  @NotNull(message = "Field description should not be null")
+  @NotNull
   @Size(min = 10)
   private String description;
   private long secondsToExpire;
