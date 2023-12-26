@@ -22,4 +22,5 @@ public class LogMessagesConstant {
   public static final String TOPIC_FINALIZED_MESSAGE = "Topic {} finalized";
   public static final String BODY_CONTENT_HAS_ERROR_MESSAGE = "The body content has some error";
   public static final String INVALID_VOTE_OPTION_VALUE_MESSAGE = "Invalid vote value";
+  public static final String ERROR_DURING_OBJECT_MAPPING_CONVERSION_MESSAGE = "Error during ObjectMapping conversion";
 }

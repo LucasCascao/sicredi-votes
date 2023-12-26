@@ -1,3 +1,8 @@
+server:
+  port: ${SICREDI_VOTES_SERVER_PORT:8080}
+  servlet:
+    context-path: /sicredi-votes
+
 spring:
   data:
     mongodb:
@@ -5,18 +10,25 @@ spring:
       username:
       password:
   kafka:
+    bootstrap-servers: ${SICREDI_VOTES_KAFKA_HOST:http://localhost:9092}
+    topic-name: ${SICREDI_VOTES_KAFKA_TOPIC_NAME:sicredi-votes-kafka-topic}
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
+      group-id: ${SICREDI_VOTES_KAFKA_TOPIC_GROUP_ID:sicredi-votes-kafka-group-id}
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+auto.create.topics.enable: true
 
 topic:
   settings:
-    seconds-to-expire-default: ${SECONDS-TO-EXPIRE-DEFAULT:60}
+    seconds-to-expire-default: ${SECONDS-TO-VOTING-FINISH-DEFAULT:60}
 
-springdoc.packages-to-scan: org.edu.sicredi.votes.controller.v1
-springdoc.swagger-ui.tryItOutEnabled: true
-springdoc.swagger-ui.operationsSorter: method
-springdoc.swagger-ui.tagsSorter: alpha
-springdoc.swagger-ui.filter: true
-springdoc.enable-data-rest: false
+springdoc:
+  packages-to-scan: org.edu.sicredi.votes.controller.v1
+  swagger-ui:
+    tryItOutEnabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+    filter: true
+  enable-data-rest: false

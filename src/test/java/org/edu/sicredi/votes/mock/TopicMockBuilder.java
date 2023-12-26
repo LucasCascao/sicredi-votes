@@ -21,6 +21,7 @@ import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
 import org.edu.sicredi.votes.domain.persistence.VotePersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
+import org.edu.sicredi.votes.domain.request.InitializeTopicRequest;
 import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
 
 public class TopicMockBuilder {
@@ -129,6 +130,12 @@ public class TopicMockBuilder {
         .closedAt(staredTime)
         .voteAmountPerOption(result)
         .votesTotalAmount(result.size())
+        .build();
+  }
+
+  public static InitializeTopicRequest aInitializeTopicRequest() {
+    return InitializeTopicRequest.builder()
+        .topicId(TOPIC_ID_MOCK)
         .build();
   }
 

@@ -1,10 +1,7 @@
 package org.edu.sicredi.votes.service.impl;
 
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_CREATED_SUCCESSFULLY_MESSAGE;
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_FINALIZED_MESSAGE;
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_OPENED_TO_RECEIVE_VOTES_MESSAGE;
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_VOTES_COUNTED_SUCCESSFULLY_MESSAGE;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -21,8 +18,11 @@ import org.edu.sicredi.votes.provider.TopicProvider;
 import org.edu.sicredi.votes.schedule.TopicFinalizer;
 import org.edu.sicredi.votes.service.TopicService;
 import org.edu.sicredi.votes.validator.TopicValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.*;
 
 @Slf4j
 @Service
@@ -33,7 +33,10 @@ public class TopicServiceImpl implements TopicService {
   private final TopicProvider topicProvider;
   private final TopicBuilder topicBuilder;
   private final TopicValidator topicValidator;
-  private final KafkaTemplate<Object, Object> kafkaTemplate;
+  private final KafkaTemplate<String, String> kafkaTemplate;
+
+  @Value("${spring.kafka.topic-name}")
+  private String topicName;
 
   @Override
   public String createNewTopic(String topicName, String description,
@@ -72,7 +75,11 @@ public class TopicServiceImpl implements TopicService {
     TopicVotesResultPersistence topicVotesResult =
         topicBuilder.buildTopicVotesCountResult(countResultByOption, topic);
     topicProvider.saveTopicVotingResult(topicVotesResult);
-//    kafkaTemplate.send("topic1", countVotesByTopic(topicId));
+    try{
+      kafkaTemplate.send(topicName, new ObjectMapper().writeValueAsString(topicVotesResult));
+    } catch (JsonProcessingException jsonProcessingException) {
+      throw new RuntimeException(ERROR_DURING_OBJECT_MAPPING_CONVERSION_MESSAGE, jsonProcessingException);
+    }
     log.info(TOPIC_FINALIZED_MESSAGE,topicId);
   }
 

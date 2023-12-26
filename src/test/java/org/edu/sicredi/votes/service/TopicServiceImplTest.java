@@ -1,17 +1,18 @@
 package org.edu.sicredi.votes.service;
 
 import static org.edu.sicredi.votes.builder.TopicBuilder.VOTE_INITIAL_COUNT_VALUE;
-import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.DESCRIPTION_MOCK;
-import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.SECONDS_TO_EXPIRE_MOCK;
-import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.TOPIC_ID_MOCK;
-import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.TOPIC_NAME_MOCK;
+import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edu.sicredi.votes.builder.TopicBuilder;
+import org.edu.sicredi.votes.constants.FieldValuesMockConstants;
 import org.edu.sicredi.votes.domain.enums.TopicStatusEnum;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
 import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
@@ -21,11 +22,14 @@ import org.edu.sicredi.votes.provider.TopicProvider;
 import org.edu.sicredi.votes.service.impl.TopicServiceImpl;
 import org.edu.sicredi.votes.validator.TopicValidator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class TopicServiceImplTest {
@@ -42,14 +46,22 @@ public class TopicServiceImplTest {
   @Mock
   private TopicValidator topicValidator;
 
+  @Mock
+  private KafkaTemplate<String, String> kafkaTemplate;
+
+  @BeforeEach
+  void setup() {
+    ReflectionTestUtils.setField(topicService, KAFKA_TOPIC_FIELD_NAME_MOCK, KAFKA_TOPIC_NAME_MOCK);
+  }
+
   @Test
   void givenValidTopicDataWhenCreatingNewTopicThenReturnNewTopicId() {
     TopicPersistence topicPersistence = TopicMockBuilder.aCreatedTopicPersistenceWithoutTopicId();
-    given(topicBuilder.buildTopicPersistence(TOPIC_NAME_MOCK, DESCRIPTION_MOCK,
+    given(topicBuilder.buildTopicPersistence(FieldValuesMockConstants.TOPIC_NAME_MOCK, DESCRIPTION_MOCK,
         SECONDS_TO_EXPIRE_MOCK)).willReturn(topicPersistence);
     given(topicProvider.saveTopic(any(TopicPersistence.class)))
         .willReturn(topicPersistence);
-    String topicId = topicService.createNewTopic(TOPIC_NAME_MOCK, DESCRIPTION_MOCK,
+    String topicId = topicService.createNewTopic(FieldValuesMockConstants.TOPIC_NAME_MOCK, DESCRIPTION_MOCK,
         SECONDS_TO_EXPIRE_MOCK);
     Assertions.assertEquals(topicPersistence.getId(), topicId);
   }
@@ -66,7 +78,7 @@ public class TopicServiceImplTest {
   }
 
   @Test
-  void givenAInitializedTopicIdWhenFinishingTopicVotingThenUpdateStatusToFinishedAndSendMessageToAMessagingQueue() {
+  void givenAInitializedTopicIdWhenFinishingTopicVotingThenUpdateStatusToFinishedAndSendMessageToAMessagingQueue() throws JsonProcessingException {
     TopicPersistence topic = TopicMockBuilder.aInitializedTopicPersistenceWithVotes();
     Map<String, Long> countResultByOption = new HashMap<>(Map.of(
         VoteOptionEnum.YES.getOptionName(), VOTE_INITIAL_COUNT_VALUE,
@@ -79,6 +91,8 @@ public class TopicServiceImplTest {
     given(topicBuilder.buildTopicVotesCountResult(countResultByOption, topic)).willReturn(
         topicVotesResultResponse);
     willDoNothing().given(topicProvider).saveTopicVotingResult(topicVotesResultResponse);
+    given(kafkaTemplate.send(KAFKA_TOPIC_NAME_MOCK, new ObjectMapper().writeValueAsString(topicVotesResultResponse)))
+            .willReturn(null);
     topicService.finalizeTopicVoting(TOPIC_ID_MOCK);
     Assertions.assertNotNull(topic.getClosedAt());
     Assertions.assertEquals(TopicStatusEnum.FINISHED, topic.getStatus());
