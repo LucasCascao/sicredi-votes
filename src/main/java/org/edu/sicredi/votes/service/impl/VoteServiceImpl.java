@@ -31,7 +31,7 @@ public class VoteServiceImpl implements VoteService {
     topic.getVotes().add(vote);
     provider.saveTopic(topic);
     log.info(VOTE_REGISTERED_SUCCESSFULLY_MESSAGE,
-        vote.getId(), topicId, voteOption.getDescription());
+        vote.getId(), topicId, voteOption.getOptionName());
   }
 
 }
