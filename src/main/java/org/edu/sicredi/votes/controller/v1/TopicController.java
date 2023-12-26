@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.edu.sicredi.votes.builder.TopicBuilder;
-import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
+import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
 import org.edu.sicredi.votes.domain.response.CreateTopicResponse;
 import org.edu.sicredi.votes.domain.response.ErrorMessageResponse;
@@ -48,9 +48,9 @@ public class TopicController {
   public ResponseEntity<TopicVotesResultResponse> getTopicResult(
       @PathVariable(name = "topicId") String topicId
   ) {
-    TopicVotesCountResult topicVotesCountResult = this.service.countVotesByTopic(topicId);
+    TopicVotesResultPersistence topicVotesResult = this.service.findTopicVotingResultByTopicId(topicId);
     return ResponseEntity.ok().body(
-        topicBuilder.buildTopicVotesResultResponse(topicVotesCountResult)
+        topicBuilder.buildTopicVotesResultResponse(topicVotesResult)
     );
   }
 

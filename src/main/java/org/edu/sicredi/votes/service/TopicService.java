@@ -1,6 +1,6 @@
 package org.edu.sicredi.votes.service;
 
-import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
+import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 
 public interface TopicService {
 
@@ -9,6 +9,6 @@ public interface TopicService {
   void startTopicVoting(String topicId);
   void finalizeTopicVoting(String topicId);
 
-  TopicVotesCountResult countVotesByTopic(String topicId);
+  TopicVotesResultPersistence findTopicVotingResultByTopicId(String topicId);
 
 }

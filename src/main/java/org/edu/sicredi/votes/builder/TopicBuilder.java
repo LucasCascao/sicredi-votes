@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.edu.sicredi.votes.domain.enums.TopicStatusEnum;
-import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
-import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
-import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
+import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
+import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
+import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -39,33 +39,34 @@ public class TopicBuilder {
         .build();
   }
 
-  public TopicVotesCountResult buildTopicVotesCountResult(
+  public TopicVotesResultPersistence buildTopicVotesCountResult(
       Map<String, Long> countResultByOption,
       TopicPersistence topic
   ) {
-    return TopicVotesCountResult.builder()
+    return TopicVotesResultPersistence.builder()
         .voteAmountPerOption(countResultByOption)
         .votesTotalAmount(topic.getVotes().size())
+        .topicId(topic.getId())
         .startedAt(topic.getStartedAt())
         .closedAt(topic.getClosedAt())
         .build();
   }
 
   public TopicVotesResultResponse buildTopicVotesResultResponse(
-      TopicVotesCountResult topicVotesCountResult
+      TopicVotesResultPersistence topicVotesResult
   ) {
     return TopicVotesResultResponse.builder()
-        .voteAmountPerOption(topicVotesCountResult.getVoteAmountPerOption())
-        .votesTotalAmount(topicVotesCountResult.getVotesTotalAmount())
-        .startedAt(topicVotesCountResult.getStartedAt())
-        .closedAt(topicVotesCountResult.getClosedAt())
+        .voteAmountPerOption(topicVotesResult.getVoteAmountPerOption())
+        .votesTotalAmount(topicVotesResult.getVotesTotalAmount())
+        .startedAt(topicVotesResult.getStartedAt())
+        .closedAt(topicVotesResult.getClosedAt())
         .build();
   }
 
   public Map<String, Long> buildInitialCountResultByOption() {
     return new HashMap<>(Map.of(
-        VoteOptionEnum.YES.getDescription(), VOTE_INITIAL_COUNT_VALUE,
-        VoteOptionEnum.NO.getDescription(), VOTE_INITIAL_COUNT_VALUE
+        VoteOptionEnum.YES.getOptionName(), VOTE_INITIAL_COUNT_VALUE,
+        VoteOptionEnum.NO.getOptionName(), VOTE_INITIAL_COUNT_VALUE
     ));
   }
 }

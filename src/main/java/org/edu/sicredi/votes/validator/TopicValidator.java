@@ -1,12 +1,13 @@
 package org.edu.sicredi.votes.validator;
 
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.ASSOCIATE_HAS_ALREADY_VOTED_MESSAGE;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_CLOSED_FOR_VOTING;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_IS_NOT_ABLE_TO_RECEIVE_VOTES_MESSAGE;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_IS_NOT_FINALIZED_TO_GET_VOTES_RESULT_MESSAGE;
+import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE;
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_REMAINS_OPEN_FOR_VOTING_MESSAGE;
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_WAS_INITIALIZED_MESSAGE;
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_CLOSED_FOR_VOTING;
-import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -21,12 +22,19 @@ import org.springframework.stereotype.Service;
 public class TopicValidator {
 
   public void verifyTopicIsOpenedToVote(TopicPersistence topic) {
-    if (TopicStatusEnum.CREATED.equals(topic.getStatus())) {
-      throw BusinessExceptionBuilder.buildBusinessException(HttpStatus.BAD_REQUEST,
-          TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE);
-    } else if (TopicStatusEnum.FINISHED.equals(topic.getStatus())) {
-      throw BusinessExceptionBuilder.buildBusinessException(HttpStatus.BAD_REQUEST,
-          TOPIC_CLOSED_FOR_VOTING);
+    if(!TopicStatusEnum.INITIALIZED.equals(topic.getStatus())){
+      String message;
+      if (TopicStatusEnum.CREATED.equals(topic.getStatus())) {
+        message = TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE;
+      } else if (TopicStatusEnum.FINISHED.equals(topic.getStatus())) {
+        message = TOPIC_CLOSED_FOR_VOTING;
+      } else {
+        message = TOPIC_IS_NOT_ABLE_TO_RECEIVE_VOTES_MESSAGE;
+      }
+      throw BusinessExceptionBuilder.buildBusinessException(
+          HttpStatus.BAD_REQUEST,
+          message
+      );
     }
   }
 
@@ -40,17 +48,22 @@ public class TopicValidator {
   }
 
   public void verifyTopicVotingIsFinalized(TopicPersistence topic) {
-    if (topic.getStatus().equals(TopicStatusEnum.CREATED)) {
+    if(!TopicStatusEnum.FINISHED.equals(topic.getStatus())){
+      String message;
+      if (TopicStatusEnum.CREATED.equals(topic.getStatus())) {
+        message = TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE;
+      } else if (TopicStatusEnum.INITIALIZED.equals(topic.getStatus())) {
+        message = TOPIC_REMAINS_OPEN_FOR_VOTING_MESSAGE;
+      } else {
+        message = TOPIC_IS_NOT_FINALIZED_TO_GET_VOTES_RESULT_MESSAGE;
+      }
       throw BusinessExceptionBuilder.buildBusinessException(HttpStatus.BAD_REQUEST,
-          TOPIC_NOT_OPENED_FOR_VOTING_MESSAGE);
-    } else if (topic.getStatus().equals(TopicStatusEnum.INITIALIZED)) {
-      throw BusinessExceptionBuilder.buildBusinessException(HttpStatus.BAD_REQUEST,
-          TOPIC_REMAINS_OPEN_FOR_VOTING_MESSAGE);
+          message);
     }
   }
 
   public void verifyTopicIsAbleToBeInitialized(TopicPersistence topic) {
-    if (Objects.nonNull(topic.getStartedAt())) {
+    if (!TopicStatusEnum.CREATED.equals(topic.getStatus())) {
       throw BusinessExceptionBuilder.buildBusinessException(HttpStatus.BAD_REQUEST,
           TOPIC_WAS_INITIALIZED_MESSAGE);
     }
