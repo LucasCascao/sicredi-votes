@@ -7,7 +7,7 @@ Bem-vindo ao repositório do projeto de criação de pautas para votação de as
 A documentação completa da API pode ser encontrada no Swagger. Consulte o link abaixo para obter detalhes sobre os endpoints disponíveis, parâmetros necessários e exemplos de requisições e respostas (necessário inicitalizar a aplicação previamente):
 
 
-[Swagger - Documentação da API](http://localhost:8080/swagger-ui/index.html) (Sistema Sicredi Votes necessita estar inicializado)
+[Swagger - Documentação da API](http://localhost:8080/sicredi-votes/swagger-ui/index.html) (Sistema Sicredi Votes necessita estar inicializado)
 
 # Inicialização da Aplicação Java 17 com Gradle 8.5
 
@@ -51,7 +51,7 @@ Antes de iniciar a aplicação, é necessário configurar algumas variáveis de 
     ./gradlew bootRun
    ```
    
-A aplicação estará disponível em http://localhost:8080.
+A aplicação estará disponível em http://localhost:8080/sicredi-votes.
 
 ## Utilizando Docker para Executar a Aplicação
 Se preferir, você pode executar a aplicação dentro de um contêiner Docker. Certifique-se de ter o Docker instalado em seu sistema e, em seguida, siga as instruções abaixo:
@@ -68,7 +68,7 @@ Se preferir, você pode executar a aplicação dentro de um contêiner Docker. C
     docker-compose up -d
     ```
    
-A aplicação estará acessível em http://localhost:8080.
+A aplicação estará acessível em http://localhost:8080/sicredi-votes.
 
 Certifique-se de configurar corretamente os parâmetros de ambiente e o banco de dados conforme necessário, consultando a documentação para obter detalhes adicionais.
 
