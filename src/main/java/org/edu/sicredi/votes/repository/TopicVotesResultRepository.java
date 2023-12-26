@@ -1,6 +1,5 @@
 package org.edu.sicredi.votes.repository;
 
-import java.util.List;
 import java.util.Optional;
 import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -8,7 +8,6 @@ import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_N
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_REMAINS_OPEN_FOR_VOTING_MESSAGE;
 import static org.edu.sicredi.votes.domain.constants.LogMessagesConstant.TOPIC_WAS_INITIALIZED_MESSAGE;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.edu.sicredi.votes.builder.BusinessExceptionBuilder;
