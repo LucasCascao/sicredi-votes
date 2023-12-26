@@ -9,7 +9,7 @@ A documentação completa da API pode ser encontrada no Swagger. Consulte o link
 
 [Swagger - Documentação da API](http://localhost:8080/sicredi-votes/swagger-ui/index.html) (Sistema Sicredi Votes necessita estar inicializado)
 
-# Inicialização da Aplicação Java 17 com Gradle 8.5
+# Inicialização da Aplicação Java 17 com Gradle 8.5 ou Docker
 
 Este guia fornece instruções sobre como subir a aplicação Java 17 utilizando Gradle 8.5. Certifique-se de seguir todos os passos corretamente e de atender aos requisitos prévios antes de iniciar.
 
@@ -59,7 +59,7 @@ Se preferir, você pode executar a aplicação dentro de um contêiner Docker. C
 1. **Construa a imagem Docker:**
 
    ```bash
-    docker build -t sicredi-votes .
+    docker build -t sicredi-votes-v1:1.0.0 .
     ```
    
 2. **Execute a imagem em um contêiner junto com os outros sistemas necessários:**
