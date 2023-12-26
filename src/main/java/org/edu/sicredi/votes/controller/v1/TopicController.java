@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.edu.sicredi.votes.builder.TopicBuilder;
 import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
+import org.edu.sicredi.votes.domain.request.InitializeTopicRequest;
 import org.edu.sicredi.votes.domain.response.CreateTopicResponse;
 import org.edu.sicredi.votes.domain.response.ErrorMessageResponse;
 import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,16 +87,15 @@ public class TopicController {
       description = "Endpoint responsible for enabling the topic to receive votes from the associates"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "204", content = {
-          @Content(schema = @Schema(implementation = CreateTopicResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+      @ApiResponse(responseCode = "204"),
       @ApiResponse(responseCode = "500", content = {
           @Content(schema = @Schema(implementation = ErrorMessageResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)})
   })
-  @PostMapping("/{topicId}")
+  @PutMapping()
   public ResponseEntity<Void> initializeVoting (
-      @PathVariable(name = "topicId") String topicId
+      @Valid @RequestBody InitializeTopicRequest initializeTopicRequest
   ) {
-    this.service.startTopicVoting(topicId);
+    this.service.startTopicVoting(initializeTopicRequest.getTopicId());
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
