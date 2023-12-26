@@ -14,5 +14,7 @@ public class FieldValuesMockConstants {
   public static final String ASSOCIATE_CPF_2_MOCK = ASSOCIATE_CPF_MOCK + "_2";
   public static final String ASSOCIATE_CPF_3_MOCK = ASSOCIATE_CPF_MOCK + "_3";
   public static final String UNKNOWN_OPTION_NAME = "unknownOptionName";
+  public static final String KAFKA_TOPIC_NAME_MOCK = "kafkaTopicName";
+  public static final String KAFKA_TOPIC_FIELD_NAME_MOCK = "topicName";
 
 }

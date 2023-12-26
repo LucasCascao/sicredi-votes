@@ -6,12 +6,14 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edu.sicredi.votes.builder.TopicBuilder;
 import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
+import org.edu.sicredi.votes.domain.request.InitializeTopicRequest;
 import org.edu.sicredi.votes.domain.response.CreateTopicResponse;
 import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
 import org.edu.sicredi.votes.mock.TopicMockBuilder;
@@ -65,10 +67,10 @@ class TopicControllerTest {
   @Test
   void givenAInitializeTopicRequestWhenInitializeVotingThenReturn204NoContent()
       throws Exception {
-    CreateTopicRequest request = TopicMockBuilder.aCreateTopicRequest();
+    InitializeTopicRequest request = TopicMockBuilder.aInitializeTopicRequest();
     willDoNothing().given(service).startTopicVoting(TOPIC_ID_MOCK);
     mockMvc.perform(
-            post(TOPIC_V1_PATH.concat(TOPIC_ID_PATH_VARIABLE), TOPIC_ID_MOCK)
+            put(TOPIC_V1_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNoContent());
@@ -89,8 +91,6 @@ class TopicControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk());
-//    verify(service).startTopicVoting(TOPIC_ID_MOCK);
-//    verify(topicBuilder).buildTopicVotesResultResponse(topicVotesCountResult);
   }
 
 }
