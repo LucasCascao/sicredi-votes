@@ -4,13 +4,32 @@ Bem-vindo ao repositório do projeto de criação de pautas para votação de as
 
 ## Documentação da API
 
-A documentação completa da API pode ser encontrada no Swagger. Consulte o link abaixo para obter detalhes sobre os endpoints disponíveis, parâmetros necessários e exemplos de requisições e respostas:
+A documentação completa da API pode ser encontrada no Swagger. Consulte o link abaixo para obter detalhes sobre os endpoints disponíveis, parâmetros necessários e exemplos de requisições e respostas (necessário inicitalizar a aplicação previamente):
 
-[Swagger - Documentação da API](http://localhost:8080/swagger-ui/index.html)
 
-## Inicializando a Aplicação com Spring Boot e Java 17 usando Gradle
+[Swagger - Documentação da API](http://localhost:8080/swagger-ui/index.html) (Sistema Sicredi Votes necessita estar inicializado)
 
-Certifique-se de ter o Java 17 e o Gradle instalados em seu sistema antes de prosseguir.
+# Inicialização da Aplicação Java 17 com Gradle 8.5
+
+Este guia fornece instruções sobre como subir a aplicação Java 17 utilizando Gradle 8.5. Certifique-se de seguir todos os passos corretamente e de atender aos requisitos prévios antes de iniciar.
+
+## Requisitos Prévios
+
+1. **Java 17**: Certifique-se de ter o Java 17 instalado em seu sistema.
+2. **Gradle 8.5**: Instale o Gradle 8.5 no seu ambiente.
+3. **MongoDB 6.0**: Instale e inicialize o MongoDB 6.0 no seu ambiente.
+4. **Kafka 5.1.2**: Instale e inicialize o Kafka 5.1.2 no seu ambiente.
+5. **Zookeeper 5.1.2**: Instale e inicialize o Zookeeper 5.1.2 no seu ambiente.
+
+## Configuração de Variáveis de Ambiente
+
+Antes de iniciar a aplicação, é necessário configurar algumas variáveis de ambiente. Certifique-se de ajustar os valores de acordo com o seu ambiente.
+
+- `SICREDI_VOTES_DATABASE_URL`: URL de conexão com o banco de dados MongoDB (ex: mongodb://localhost:27017/sicred-votes).
+- `SICREDI_VOTES_KAFKA_HOST`: Endereço do servidor Kafka (ex: localhost:9092).
+- `SICREDI_VOTES_KAFKA_TOPIC_NAME`: Nome do tópico Kafka para mensagens relacionadas a votos.
+- `SICREDI_VOTES_KAFKA_TOPIC_GROUP_ID`: Identificação do grupo de consumidores para o tópico Kafka.
+- `SECONDS_TO_VOTING_FINISH_DEFAULT`: Tempo padrão (em segundos) para o término de uma votação.
 
 ### Passos para Inicialização
 
@@ -43,10 +62,10 @@ Se preferir, você pode executar a aplicação dentro de um contêiner Docker. C
     docker build -t sicredi-votes .
     ```
    
-2. **Execute a imagem em um contêiner:**
+2. **Execute a imagem em um contêiner junto com os outros sistemas necessários:**
 
    ```bash
-    docker run -p 8080:8080 sicredi-votes
+    docker-compose up -d
     ```
    
 A aplicação estará acessível em http://localhost:8080.
