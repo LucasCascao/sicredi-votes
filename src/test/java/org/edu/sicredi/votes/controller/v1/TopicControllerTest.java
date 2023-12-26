@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edu.sicredi.votes.builder.TopicBuilder;
-import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
+import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
 import org.edu.sicredi.votes.domain.response.CreateTopicResponse;
 import org.edu.sicredi.votes.domain.response.TopicVotesResultResponse;
@@ -79,10 +79,10 @@ class TopicControllerTest {
   void givenAGetTopicVotingResultRequestWhenVotingWasFinalizedThenReturn200AndTopicVotesResultResponse()
       throws Exception {
     CreateTopicRequest request = TopicMockBuilder.aCreateTopicRequest();
-    TopicVotesCountResult topicVotesCountResult = TopicMockBuilder.aTopicVotesCountResult();
+    TopicVotesResultPersistence topicVotesResult = TopicMockBuilder.aTopicVotesResultPersistence();
     TopicVotesResultResponse topicVotesResultResponse = TopicMockBuilder.aTopicVotesResultResponse();
-    given(service.countVotesByTopic(TOPIC_ID_MOCK)).willReturn(topicVotesCountResult);
-    given(topicBuilder.buildTopicVotesResultResponse(topicVotesCountResult))
+    given(service.findTopicVotingResultByTopicId(TOPIC_ID_MOCK)).willReturn(topicVotesResult);
+    given(topicBuilder.buildTopicVotesResultResponse(topicVotesResult))
         .willReturn(topicVotesResultResponse);
     mockMvc.perform(
             get(TOPIC_V1_PATH.concat(TOPIC_ID_PATH_VARIABLE), TOPIC_ID_MOCK)

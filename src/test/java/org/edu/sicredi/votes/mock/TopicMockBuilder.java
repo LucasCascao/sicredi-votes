@@ -1,6 +1,9 @@
 package org.edu.sicredi.votes.mock;
 
 import static org.edu.sicredi.votes.builder.TopicBuilder.VOTE_INITIAL_COUNT_VALUE;
+import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.ASSOCIATE_CPF_1_MOCK;
+import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.ASSOCIATE_CPF_2_MOCK;
+import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.ASSOCIATE_CPF_3_MOCK;
 import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.ASSOCIATE_CPF_MOCK;
 import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.DESCRIPTION_MOCK;
 import static org.edu.sicredi.votes.constants.FieldValuesMockConstants.SECONDS_TO_EXPIRE_MOCK;
@@ -14,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import org.edu.sicredi.votes.domain.enums.TopicStatusEnum;
 import org.edu.sicredi.votes.domain.enums.VoteOptionEnum;
-import org.edu.sicredi.votes.domain.model.TopicVotesCountResult;
+import org.edu.sicredi.votes.domain.persistence.TopicVotesResultPersistence;
 import org.edu.sicredi.votes.domain.persistence.TopicPersistence;
 import org.edu.sicredi.votes.domain.persistence.VotePersistence;
 import org.edu.sicredi.votes.domain.request.CreateTopicRequest;
@@ -40,7 +43,7 @@ public class TopicMockBuilder {
         .build();
   }
 
-  public static TopicPersistence aCreatedTopicPersistenceWithoutTipicId() {
+  public static TopicPersistence aCreatedTopicPersistenceWithoutTopicId() {
     return aTopicPersistence()
         .status(TopicStatusEnum.CREATED)
         .build();
@@ -69,9 +72,26 @@ public class TopicMockBuilder {
   }
 
   public static TopicPersistence aFinishedTopicPersistence() {
+    Date closedTime = new Date();
+    Date staredTime = new Date(closedTime.getTime() - SECONDS_TO_EXPIRE_MOCK * 1000);
+    Set<VotePersistence> votes = aVoteSet();
     return aTopicPersistence()
         .status(TopicStatusEnum.FINISHED)
+        .startedAt(staredTime)
+        .closedAt(closedTime)
+        .votes(votes)
         .build();
+  }
+
+  public static Set<VotePersistence> aVoteSet() {
+    return Set.of(
+        VotePersistence.builder().associateCpf(ASSOCIATE_CPF_1_MOCK)
+            .vote(VoteOptionEnum.YES).build(),
+        VotePersistence.builder().associateCpf(ASSOCIATE_CPF_2_MOCK)
+            .vote(VoteOptionEnum.YES).build(),
+        VotePersistence.builder().associateCpf(ASSOCIATE_CPF_3_MOCK)
+            .vote(VoteOptionEnum.NO).build()
+    );
   }
 
   private static TopicPersistence.TopicPersistenceBuilder aTopicPersistence() {
@@ -87,25 +107,24 @@ public class TopicMockBuilder {
     Date closedTime = new Date();
     Date staredTime = new Date(closedTime.getTime() - SECONDS_TO_EXPIRE_MOCK * 1000);
     Map<String, Long> result = new HashMap<>(Map.of(
-        VoteOptionEnum.YES.getDescription(), VOTE_INITIAL_COUNT_VALUE,
-        VoteOptionEnum.NO.getDescription(), VOTE_INITIAL_COUNT_VALUE
+        VoteOptionEnum.YES.getOptionName(), VOTE_INITIAL_COUNT_VALUE,
+        VoteOptionEnum.NO.getOptionName(), VOTE_INITIAL_COUNT_VALUE
     ));
     return TopicVotesResultResponse.builder()
         .startedAt(staredTime)
-        .closedAt(staredTime)
+        .closedAt(closedTime)
         .voteAmountPerOption(result)
         .votesTotalAmount(result.size())
         .build();
   }
 
-  public static TopicVotesCountResult aTopicVotesCountResult() {
+  public static TopicVotesResultPersistence aTopicVotesResultPersistence() {
     Date closedTime = new Date();
     Date staredTime = new Date(closedTime.getTime() - SECONDS_TO_EXPIRE_MOCK * 1000);
-    Map<String, Long> result = new HashMap<>(Map.of(
-        VoteOptionEnum.YES.getDescription(), VOTE_INITIAL_COUNT_VALUE,
-        VoteOptionEnum.NO.getDescription(), VOTE_INITIAL_COUNT_VALUE
-    ));
-    return TopicVotesCountResult.builder()
+    Map<String, Long> result = new HashMap<>();
+    result.put(VoteOptionEnum.YES.getOptionName(), VOTE_INITIAL_COUNT_VALUE);
+    result.put( VoteOptionEnum.NO.getOptionName(), VOTE_INITIAL_COUNT_VALUE);
+    return TopicVotesResultPersistence.builder()
         .startedAt(staredTime)
         .closedAt(staredTime)
         .voteAmountPerOption(result)
